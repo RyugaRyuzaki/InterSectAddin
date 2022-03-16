@@ -107,7 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
-    <Folder Include="Report\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
