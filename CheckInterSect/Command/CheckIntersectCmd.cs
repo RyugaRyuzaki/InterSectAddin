@@ -32,7 +32,7 @@ namespace CheckInterSect.Command
             {
                 transGr.Start("RAPI00TransGr");
 
-                CheckIntersectViewModel viewModel = new CheckIntersectViewModel(uidoc, doc);
+                CheckIntersectViewModel viewModel = new CheckIntersectViewModel(uiapp, doc);
                 CheckIntersectWindow window = new CheckIntersectWindow(viewModel);
                 if (window.ShowDialog() == false) return Result.Cancelled;
 

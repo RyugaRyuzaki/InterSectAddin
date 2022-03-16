@@ -85,6 +85,8 @@
     <Compile Include="Command\CheckIntersectCmd.cs" />
     <Compile Include="Library\Converter\BaseValueConverter.cs" />
     <Compile Include="Library\Converter\ReportPageValueConverter.cs" />
+    <Compile Include="Library\DistinctCategory.cs" />
+    <Compile Include="Model\ElementModel.cs" />
     <Compile Include="View\ReportView.xaml.cs">
       <DependentUpon>ReportView.xaml</DependentUpon>
     </Compile>
@@ -105,9 +107,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
