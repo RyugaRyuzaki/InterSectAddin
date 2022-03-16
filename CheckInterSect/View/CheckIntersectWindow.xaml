@@ -1,0 +1,152 @@
+<Window x:Name="MainWindow" x:Class="CheckInterSect.CheckIntersectWindow"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+         xmlns:custom="clr-namespace:WpfCustomControls.CustomControls;assembly=WpfCustomControls"
+        xmlns:customViewModel="clr-namespace:WpfCustomControls.ViewModel;assembly=WpfCustomControls"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:Report="clr-namespace:CheckInterSect.Library.Converter"
+        Title="Check Intersect Element" 
+        ResizeMode="NoResize" 
+        ShowInTaskbar="true" 
+        WindowStartupLocation="CenterScreen"
+        Height="650" Width="1000"
+        Topmost="false"
+        FontSize="11"
+        FontFamily="Tahoma"
+        Background="#f0ebeb"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        >
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/WpfCustomControls;component/Resource/Styles.xaml"></ResourceDictionary>
+                <ResourceDictionary>
+                    <DataTemplate x:Name="taskBarViewModel" DataType="{x:Type customViewModel:TaskBarViewModel}">
+                        <custom:TaskBarControl></custom:TaskBarControl>
+                    </DataTemplate>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+  <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <ContentControl Content="{Binding TaskBarViewModel}"></ContentControl>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <!--#region Link -->
+            <GroupBox Header="File Link" Grid.Column="0" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"></RowDefinition>
+                        <RowDefinition Height="35"></RowDefinition>
+                        <RowDefinition Height="35"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="All File Names"></TextBlock>
+                    <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ></ComboBox>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Categories"></TextBlock>
+                    <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ></ComboBox>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Parameters"></TextBlock>
+                    <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ></ComboBox>
+                    <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <ListView  >
+                            <ListView.View>
+                                <GridView  >
+                                    <GridViewColumn  Width="60" Header="ID" DisplayMemberBinding="{Binding NumberLayer}"></GridViewColumn>
+                                    <GridViewColumn Width="60" Header="Type" DisplayMemberBinding="{Binding NumberPile}"></GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </ScrollViewer>
+                </Grid>
+            </GroupBox>
+            <!--#endregion-->
+            <!--#region Main -->
+            <GroupBox Header="File Main" Grid.Column="1" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"></RowDefinition>
+                        <RowDefinition Height="35"></RowDefinition>
+                        <RowDefinition Height="35"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                   
+                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Categories"></TextBlock>
+                    <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ></ComboBox>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Parameters"></TextBlock>
+                    <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" ></ComboBox>
+                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Style="{StaticResource ButtonStyle}" Width="80" Content="Check"></Button>
+                        <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Width="80" Content="Check All"></Button>
+                    </Grid>
+                    <ScrollViewer Grid.Row="3" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                        <ListView  >
+                            <ListView.View>
+                                <GridView  >
+                                    <GridViewColumn  Width="60" Header="ID" DisplayMemberBinding="{Binding NumberLayer}"></GridViewColumn>
+                                    <GridViewColumn Width="60" Header="Type" DisplayMemberBinding="{Binding NumberPile}"></GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </ScrollViewer>
+                </Grid>
+            </GroupBox>
+            <!--#endregion-->
+            <!--#region Report -->
+            <GroupBox Header="View Report" Grid.Column="2" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        
+                        <Frame>
+                            <Frame.Content>
+                                <MultiBinding Converter="{Report:ReportPageValueConverter}">
+                                    <Binding Path="Total" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"></Binding>
+                                    <Binding Path="Current" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"></Binding>
+                                </MultiBinding>
+                            </Frame.Content>
+                        </Frame>
+                    </Grid>
+                    <DockPanel Grid.Row="1" LastChildFill="False">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export PDF"></Button>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export Excel"></Button>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="70" Content="Next"></Button>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="70" Content="Back"></Button>
+                    </DockPanel>
+                </Grid>
+            </GroupBox>
+            <!--#endregion-->
+        </Grid>
+     
+  </Grid>
+</Window>
