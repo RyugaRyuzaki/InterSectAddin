@@ -13,6 +13,7 @@ using Application = Autodesk.Revit.ApplicationServices.Application;
 
 namespace CheckInterSect.Command
 {
+   
     [Transaction(TransactionMode.Manual)]
     public class CheckIntersectCmd : IExternalCommand
     {
@@ -25,9 +26,13 @@ namespace CheckInterSect.Command
             Document doc = uidoc.Document;
 
             // code
-
-
-
+             BuiltInCategory RevitLinkID = (BuiltInCategory)(-2001352);
+            List<RevitLinkType> revitLinkTypes = new FilteredElementCollector(doc).OfCategory(RevitLinkID).OfClass(typeof(RevitLinkType)).Cast<RevitLinkType>().ToList();
+            if (revitLinkTypes.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show("There is no Revit Link in this Document");
+                return Result.Cancelled;
+            }
             using (TransactionGroup transGr = new TransactionGroup(doc))
             {
                 transGr.Start("RAPI00TransGr");

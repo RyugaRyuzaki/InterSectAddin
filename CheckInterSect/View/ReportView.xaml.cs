@@ -12,19 +12,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-namespace CheckInterSect
+                
+namespace CheckInterSect.View
 {
     /// <summary>
-    /// Interaction logic for LoginPage.xaml
+    /// Interaction logic for ReportView.xaml
     /// </summary>
-    public partial class ReportView : Page
+    public partial class ReportView : UserControl
     {
-        private ReportViewModel ViewModel;
-        public ReportView(ReportViewModel viewModel)
+        
+        public ReportView()
         {
             InitializeComponent();
-            ViewModel = viewModel;
-            this.DataContext = ViewModel;
+           
         }
     }
 }

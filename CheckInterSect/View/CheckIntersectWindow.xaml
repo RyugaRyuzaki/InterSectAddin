@@ -7,19 +7,23 @@
          xmlns:custom="clr-namespace:WpfCustomControls.CustomControls;assembly=WpfCustomControls"
         xmlns:customViewModel="clr-namespace:WpfCustomControls.ViewModel;assembly=WpfCustomControls"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:Report="clr-namespace:CheckInterSect.Library.Converter"
+        xmlns:view="clr-namespace:CheckInterSect.View"
+        xmlns:viewModel="clr-namespace:CheckInterSect.ViewModel"
+       xmlns:local="clr-namespace:CheckInterSect"
         Title="Check Intersect Element" 
         ResizeMode="NoResize" 
         ShowInTaskbar="true" 
         WindowStartupLocation="CenterScreen"
-        Height="650" Width="1000"
+        Height="650" Width="680"
         Topmost="false"
         FontSize="11"
         FontFamily="Tahoma"
         Background="#f0ebeb"
         WindowStyle="None"
         AllowsTransparency="True"
+        
         >
+    
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -27,6 +31,9 @@
                 <ResourceDictionary>
                     <DataTemplate x:Name="taskBarViewModel" DataType="{x:Type customViewModel:TaskBarViewModel}">
                         <custom:TaskBarControl></custom:TaskBarControl>
+                    </DataTemplate>
+                    <DataTemplate x:Name="reportViewModel" DataType="{x:Type viewModel:ReportViewModel}">
+                        <view:ReportView></view:ReportView>
                     </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -43,113 +50,157 @@
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="250"></ColumnDefinition>
+                <ColumnDefinition Width="430"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <!--#region Link -->
-            <GroupBox Header="File Link" Grid.Column="0" Margin="5">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="35"></RowDefinition>
-                        <RowDefinition Height="35"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.6*"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="All File Names"></TextBlock>
-                    <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}"
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"></RowDefinition>
+                    <RowDefinition Height="135"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <!--#region Link -->
+
+                <GroupBox Header="File Link" Grid.Row="0" Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"></RowDefinition>
+                            <RowDefinition Height="35"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="All File Names"></TextBlock>
+                        <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}"
                               ItemsSource="{Binding RevitLinks}" DisplayMemberPath="Title"
                               SelectedItem="{Binding SelectedRevitLink,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                  IsEnabled="{Binding EnabledCategory,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                               ></ComboBox>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Categories"></TextBlock>
-                    <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" 
+                        <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Categories"></TextBlock>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" 
                                  ItemsSource="{Binding AllLinkCategory}" DisplayMemberPath="Name"
                                  SelectedItem="{Binding SelectedLinkCategory,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                  IsEnabled="{Binding EnabledCategory,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                               ></ComboBox>
-                 
-                    <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                        <ListView  ItemsSource="{Binding AllLinkElementModels,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+
+                        <!--<ScrollViewer Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <ListView  ItemsSource="{Binding AllLinkElementModels,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
                                    SelectedItem="{Binding SelectedLinkElemenModel,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                    >
 
-                            <ListView.View>
-                                <GridView  >
-                                    <GridViewColumn  Width="80" Header="ID" DisplayMemberBinding="{Binding Element.Id}"></GridViewColumn>
-                                    <GridViewColumn Width="120" Header="Type" DisplayMemberBinding="{Binding ElementType.Name}"></GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-                    </ScrollViewer>
-                </Grid>
-            </GroupBox>
-            <!--#endregion-->
-            <!--#region Main -->
-            <GroupBox Header="File Main" Grid.Column="1" Margin="5">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="35"></RowDefinition>
-                        <RowDefinition Height="35"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.6*"></ColumnDefinition>
-                        <ColumnDefinition></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                   
-                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Categories"></TextBlock>
-                    <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}"
-                                ItemsSource="{Binding AllMainCategory}" DisplayMemberPath="Name"
-                                 SelectedItem="{Binding SelectedMainCategory,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
-                              ></ComboBox>
-                   
-                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                                <ListView.View>
+                                    <GridView  >
+                                        <GridViewColumn  Width="80" Header="ID" DisplayMemberBinding="{Binding Element.Id}"></GridViewColumn>
+                                        <GridViewColumn Width="120" Header="Type" DisplayMemberBinding="{Binding ElementType.Name}"></GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </ScrollViewer>-->
+                    </Grid>
+                </GroupBox>
+                <!--#endregion-->
+                <!--#region Main -->
+                <GroupBox Header="File Main" Grid.Row="1" Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"></RowDefinition>
+                            <RowDefinition Height="35"></RowDefinition>
+                            <RowDefinition Height="35"></RowDefinition>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="0.6*"></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Style="{StaticResource ButtonStyle}" Width="80" Content="Check"></Button>
-                        <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Width="80" Content="Check All"></Button>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockCenter}" Text="Categories"></TextBlock>
+                        <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ComboBoxStyle}"
+                                ItemsSource="{Binding AllMainCategory}" DisplayMemberPath="Name"
+                                 SelectedItem="{Binding SelectedMainCategory,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                  IsEnabled="{Binding EnabledCategory,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                              ></ComboBox>
+
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Style="{StaticResource ButtonStyle}" Width="80" Content="Check"
+                                Command="{Binding CheckCommand}" CommandParameter="{Binding ElementName=MainWindow}"
+                                ></Button>
+                            <Button Grid.Column="1" Style="{StaticResource ButtonStyle}" Width="80" Content="Modify"
+                                Command="{Binding ModifyCommand}" CommandParameter="{Binding ElementName=MainWindow}"
+                                ></Button>
+                            
+                        </Grid>
+                        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ButtonStyle}" Width="80" Content="Check All"
+                                 Command="{Binding CheckAllCommand}" CommandParameter="{Binding ElementName=MainWindow}"
+                                ></Button>
+                        <!--<ScrollViewer Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <ListView   ItemsSource="{Binding AllMainElementModels,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                   SelectedItem="{Binding SelectedMainElemenModel,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                                <ListView.View>
+                                    <GridView  >
+                                        <GridViewColumn  Width="80" Header="ID" DisplayMemberBinding="{Binding Element.Id}"></GridViewColumn>
+                                        <GridViewColumn Width="120" Header="Type" DisplayMemberBinding="{Binding ElementType.Name}"></GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </ScrollViewer>-->
                     </Grid>
+                </GroupBox>
+                <!--#endregion-->
+                <!--#region Main -->
+                <GroupBox Header="Elements Intersect" Grid.Row="2" Margin="5">
                     <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                        <ListView  >
-                            <ListView.View>
-                                <GridView  >
-                                    <GridViewColumn  Width="60" Header="ID" DisplayMemberBinding="{Binding NumberLayer}"></GridViewColumn>
-                                    <GridViewColumn Width="60" Header="Type" DisplayMemberBinding="{Binding NumberPile}"></GridViewColumn>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-                    </ScrollViewer>
-                </Grid>
-            </GroupBox>
-            <!--#endregion-->
+                        <ListView   ItemsSource="{Binding AllReportViewModels,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" 
+                                   SelectedItem="{Binding ReportViewModel,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                                <ListView.View>
+                                    <GridView  >
+                                    <GridViewColumn  Width="80" Header="ID" DisplayMemberBinding="{Binding ElementSet.Element.Id}"></GridViewColumn>
+                                    <GridViewColumn Width="120" Header="Type" DisplayMemberBinding="{Binding ElementSet.ElementType.Name}"></GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </ScrollViewer>
+                </GroupBox>
+                <!--#endregion-->
+            </Grid>
+         
+         
             <!--#region Report -->
-            <GroupBox Header="View Report" Grid.Column="2" Margin="5">
+            <GroupBox Header="View Report" Grid.Column="1" Margin="5">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition Height="40"></RowDefinition>
                         
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        
-                        <Frame>
-                            <Frame.Content>
+                    <StackPanel Grid.Row="0">
+                        <!--<Canvas>
+                            <Rectangle Height="535" Width="375"></Rectangle>
+                        </Canvas>-->
+                        <ContentControl  Content="{Binding ReportViewModel,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+
+                            <!--<ContentControl.Content>
                                 <MultiBinding Converter="{Report:ReportPageValueConverter}">
                                     <Binding Path="Total" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"></Binding>
-                                    <Binding Path="Current" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"></Binding>
+                                    <Binding Path="Doc"></Binding>
+                                    <Binding Path="SelectedRevitLink" UpdateSourceTrigger="PropertyChanged" Mode="TwoWay"></Binding>
+                                    <Binding Path="ElementModelSet" ></Binding>
+                                    <Binding Path="ElementModelIntersects"></Binding>
                                 </MultiBinding>
-                            </Frame.Content>
-                        </Frame>
-                    </Grid>
+                            </ContentControl.Content>-->
+                           
+                        </ContentControl>
+                    </StackPanel>
                     <DockPanel Grid.Row="1" LastChildFill="False">
-                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export PDF"></Button>
-                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export Excel"></Button>
-                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="60" Content="Next"></Button>
-                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="60" Content="Back"></Button>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export PDF"
+                                Command="{Binding ExportPDFCommand}" CommandParameter="{Binding ElementName=MainWindow}"
+                                ></Button>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export Excel"
+                                Command="{Binding ExportExcelCommand}" CommandParameter="{Binding ElementName=MainWindow}"
+                                ></Button>
                     </DockPanel>
                 </Grid>
             </GroupBox>
