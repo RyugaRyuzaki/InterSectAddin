@@ -10,11 +10,11 @@
         xmlns:view="clr-namespace:CheckInterSect.View"
         xmlns:viewModel="clr-namespace:CheckInterSect.ViewModel"
        xmlns:local="clr-namespace:CheckInterSect"
-        Title="Check Intersect Element" 
+        Title="Check Clash Element" 
         ResizeMode="NoResize" 
         ShowInTaskbar="true" 
         WindowStartupLocation="CenterScreen"
-        Height="650" Width="680"
+        Height="650" Width="750"
         Topmost="false"
         FontSize="11"
         FontFamily="Tahoma"
@@ -51,7 +51,7 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"></ColumnDefinition>
-                <ColumnDefinition Width="430"></ColumnDefinition>
+                <ColumnDefinition Width="500"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -174,13 +174,9 @@
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition Height="40"></RowDefinition>
-                        
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0">
-                        <!--<Canvas>
-                            <Rectangle Height="535" Width="375"></Rectangle>
-                        </Canvas>-->
-                        <ContentControl  Content="{Binding ReportViewModel,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                    <Grid x:Name="Layout" Grid.Row="0">
+                        <ContentControl  Content="{Binding ReportViewModel,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" >
 
                             <!--<ContentControl.Content>
                                 <MultiBinding Converter="{Report:ReportPageValueConverter}">
@@ -191,21 +187,24 @@
                                     <Binding Path="ElementModelIntersects"></Binding>
                                 </MultiBinding>
                             </ContentControl.Content>-->
-                           
+
                         </ContentControl>
-                    </StackPanel>
-                    <DockPanel Grid.Row="1" LastChildFill="False">
+                    </Grid>
+                    <DockPanel  LastChildFill="False" Grid.Row="1">
                         <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export PDF"
                                 Command="{Binding ExportPDFCommand}" CommandParameter="{Binding ElementName=MainWindow}"
                                 ></Button>
                         <Button DockPanel.Dock="Right" Style="{StaticResource ButtonStyle}" Width="90" Content="Export Excel"
                                 Command="{Binding ExportExcelCommand}" CommandParameter="{Binding ElementName=MainWindow}"
                                 ></Button>
+                        
                     </DockPanel>
                 </Grid>
+                
             </GroupBox>
             <!--#endregion-->
         </Grid>
-     
-  </Grid>
+        
+        
+    </Grid>
 </Window>

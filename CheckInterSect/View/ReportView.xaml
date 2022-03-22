@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              
              mc:Ignorable="d" 
-             d:DesignHeight="530" d:DesignWidth="385">
+             d:DesignHeight="500" d:DesignWidth="480"
+             x:Name="ReportUC"
+             Background="Cornsilk"
+             >
     <FrameworkElement.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,20 +17,20 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </FrameworkElement.Resources>
-    <Grid Background="Cornsilk">
+    <Grid Margin="10">
         <ScrollViewer VerticalScrollBarVisibility="Auto" >
-            <Grid >
+            <Grid  >
                 <Grid.RowDefinitions>
 
                     <RowDefinition Height="145"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <!--#region ElementSet-->
+              
                 <Grid Grid.Row="0" Margin="10">
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition Width="80"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -51,8 +54,7 @@
                     <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource DataGridTextBlockStyle}" Text="{Binding ElementSet.ElementType.Name}"></TextBlock>
 
                 </Grid>
-                <!--#endregion-->
-                <!--#region Elements Intesect-->
+             
                 <StackPanel Grid.Row="1" Margin="10">
                     <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Text="Elements Intersect" ></TextBlock>
                     <ListView ItemsSource="{Binding ElementInterSects,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Background="Transparent" >
@@ -66,10 +68,12 @@
                                     <Image Grid.Column="0" Stretch="UniformToFill" Source="{Binding ImageSource}" ></Image>
                                     <Grid Grid.Column="1" Margin="5 0 0 0">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100"></ColumnDefinition>
+                                            <ColumnDefinition Width="80"></ColumnDefinition>
                                             <ColumnDefinition></ColumnDefinition>
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
                                             <RowDefinition></RowDefinition>
@@ -81,12 +85,19 @@
                                         <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="Element ID"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="Category"></TextBlock>
                                         <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="Element Type"></TextBlock>
-                                        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="Clash Point"></TextBlock>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}"  Text="Clash Point"></TextBlock>
 
                                         <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource DataGridTextBlockStyle}" Text="{Binding Element.Id}"></TextBlock>
                                         <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource DataGridTextBlockStyle}" Text="{Binding Element.Category.Name}"></TextBlock>
                                         <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource DataGridTextBlockStyle}" Text="{Binding ElementType.Name}"></TextBlock>
-                                        <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource DataGridTextBlockStyle}" Text="{Binding ClashPoint}" TextWrapping="Wrap"></TextBlock>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="X"></TextBlock>
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="Y"></TextBlock>
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource DataGridTextBlockStyle}" Foreground="Blue" Text="Z"></TextBlock>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource DataGridTextBlockStyle}"  Text="{Binding X}"></TextBlock>
+                                        <TextBlock Grid.Row="5" Grid.Column="2" Style="{StaticResource DataGridTextBlockStyle}"  Text="{Binding Y}"></TextBlock>
+                                        <TextBlock Grid.Row="6" Grid.Column="2" Style="{StaticResource DataGridTextBlockStyle}"  Text="{Binding Z}"></TextBlock>
 
                                     </Grid>
                                 </Grid>
@@ -94,8 +105,9 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </StackPanel>
-                <!--#endregion-->
+               
             </Grid>
+           
         </ScrollViewer>
 
     </Grid>

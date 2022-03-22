@@ -9,6 +9,8 @@ namespace CheckInterSect
     public class ImageExporterModel
     {
 
+        private static readonly Color colorRed = new Color(255, 0, 0);
+        private static readonly Color colorBlack = new Color(255, 255, 255);
         object[][] DataExport =
         {
              new object[] { "Isometric", 1, 45, 35 }, // 35.264
@@ -16,8 +18,8 @@ namespace CheckInterSect
              new object[] { "East", 1, 90, 0 },
              new object[] { "Top", 1, 0, 90, 0 }};
 
-        List<Autodesk.Revit.DB.View> ViewExport;
-
+        //List<Autodesk.Revit.DB.View> ViewExport;
+        public View3D View3D { get; set; }
         BuiltInCategory[] HideCategories = new BuiltInCategory[]{ BuiltInCategory.OST_Cameras, BuiltInCategory.OST_IOS_GeoSite,BuiltInCategory.OST_Levels,BuiltInCategory.OST_ProjectBasePoint};
 
         ViewOrientation3D GetOrientationFor(double yaw_degrees, double pitch_degrees)
@@ -39,82 +41,44 @@ namespace CheckInterSect
 
         public ImageExporterModel(Document doc,DirectShape directShape)
         {
-            Color color = new Color(255, 0, 0);
-            Color colorBlack = new Color(255, 255, 255);
-            OverrideGraphicSettings ogs = new OverrideGraphicSettings();
-            ogs.SetSurfaceForegroundPatternColor(color);
-            Element aa = new FilteredElementCollector(doc).OfClass(typeof(FillPatternElement)).Where(x => x.Name.Equals("<Solid fill>")).FirstOrDefault();
-            Element aa1 = new FilteredElementCollector(doc).OfClass(typeof(LinePatternElement)).Where(x => x.Name.Equals("_S4R_Center Line 1/4")).FirstOrDefault();
-            ogs.SetCutForegroundPatternId(aa.Id);
-            ogs.SetSurfaceForegroundPatternId(aa.Id);
-            ogs.SetCutForegroundPatternColor(color);
-            ogs.SetSurfaceForegroundPatternColor(color);
-
-            ogs.SetProjectionLinePatternId(aa1.Id);
-            ogs.SetProjectionLineColor(colorBlack);
-            ogs.SetProjectionLineWeight(5);
-
+            
             ViewFamilyType viewFamilyType= new FilteredElementCollector(doc).OfClass(typeof(ViewFamilyType)).Cast<ViewFamilyType>().FirstOrDefault(x =>x.ViewFamily == ViewFamily.ThreeDimensional);
 
-            View3D v = View3D.CreateIsometric(doc, viewFamilyType.Id);
-            v.Name = "Isometric";
-            v.DetailLevel = ViewDetailLevel.Fine;
-            v.SetElementOverrides(directShape.Id, ogs);
-
-            int nViews = DataExport.Length;
-            ViewExport = new List<Autodesk.Revit.DB.View>(nViews) { v };
-            for (int i = 1; i < nViews; ++i)
-            {
-                v = View3D.CreateIsometric(doc, viewFamilyType.Id);
-                object[] d = DataExport[i];
-                v.Name = d[0] as string;
-                v.SetOrientation(GetOrientationFor((int)(d[2]), (int)(d[3])));
-                v.SaveOrientation();
-                v.DetailLevel = ViewDetailLevel.Fine;
-                v.SetElementOverrides(directShape.Id, ogs);
-                ViewExport.Add(v);
-            }
-
-            foreach (Autodesk.Revit.DB.View v2 in ViewExport)
-            {
-                Parameter graphicDisplayOptions = v2.get_Parameter( BuiltInParameter.MODEL_GRAPHICS_STYLE);
-                graphicDisplayOptions.Set(6);
-                Categories cats = doc.Settings.Categories;
-
-                foreach (BuiltInCategory bic in HideCategories)
-                {
-                    Category cat = cats.get_Item(bic);
-                    if (null != cat)
-                    {
-                        v2.SetCategoryHidden(cat.Id, true);
-                    }
-                }
-            }
-        }
-
-        public string ExportToImage(Document doc, DirectShape directShape, Element elementSet, Element e, string folderName)
-        {
+            View3D = View3D.CreateIsometric(doc, viewFamilyType.Id);
+            View3D.Name = "Isometric";
             
+           
+        }
+       
 
-            foreach (Autodesk.Revit.DB.View v in ViewExport)
+        public string ExportToImage(Document doc, DirectShape directShape, Element elementSet, Element e, string folderName,List<ElementId> elementIds,XYZ centroid)
+        {
+
+            OverrideGraphicSettings ogs = GetOverrideSettingDirectShape(doc);
+            OverrideGraphicSettings ogs1 = GetOverrideSettingUnUseElements(doc);
+            List<ElementId> hideElements
+                  = new FilteredElementCollector(doc, View3D.Id).Where(a => a.CanBeHidden(View3D) && a.Id.IntegerValue != elementSet.Id.IntegerValue).Select(b => b.Id).ToList();
+
+
+            View3D.HideElements(hideElements);
+            List<ElementId> ids = new List<ElementId>(1) { directShape.Id };
+
+            View3D.UnhideElements(ids);
+
+
+            View3D.DetailLevel = ViewDetailLevel.Fine;
+            
+            View3D.DisplayStyle = DisplayStyle.Shading;
+            View3D.SetElementOverrides(directShape.Id, ogs);
+            foreach (var item in elementIds)
             {
-                List<ElementId> hideElements
-                  = new FilteredElementCollector(doc, v.Id) .Where(a => a.CanBeHidden(v) && a.Id.IntegerValue != elementSet.Id.IntegerValue).Select(b => b.Id).ToList();
-
-                v.HideElements(hideElements);
-
-                List<ElementId> ids = new List<ElementId>(1) { directShape.Id };
-
-                v.UnhideElements(ids);
+                View3D.SetCategoryOverrides(item, ogs1);
             }
-          
 
-            View3D v1 = ViewExport.Where(x => x.Name.Contains("Isometric")).FirstOrDefault() as View3D;
-            v1.DetailLevel = ViewDetailLevel.Fine;
-            v1.DisplayStyle = DisplayStyle.Shading;
+            GetCropRegionView3D(centroid);
 
 
-            List<ElementId> ids1 = new List<ElementId>(); ids1.Add(v1.Id);
+            List<ElementId> ids1 = new List<ElementId>(); ids1.Add(View3D.Id);
             doc.Regenerate();
 
             string filepath = Path.Combine(folderName, e.Id.ToString() + ".jpg");
@@ -123,7 +87,7 @@ namespace CheckInterSect
                 FilePath = filepath,
                 FitDirection = FitDirectionType.Horizontal,
                 HLRandWFViewsFileType = ImageFileType.PNG,
-                ImageResolution = ImageResolution.DPI_150,
+                ImageResolution = ImageResolution.DPI_600,
                 ShouldCreateWebSite = false
             };
             ieo.SetViewsAndSheets(ids1);
@@ -131,33 +95,80 @@ namespace CheckInterSect
             ieo.ZoomType = ZoomFitType.FitToPage;
             ieo.ViewName = "tmp";
 
-            //int n = ViewExport.Count;
-
-            //if (0 < n)
-            //{
-            //    List<ElementId> ids = new List<ElementId>(
-            //      ViewExport.Select<Autodesk.Revit.DB.View, ElementId>(
-            //        v => v.Id));
-
-            //    ieo.SetViewsAndSheets(ids);
-            //    ieo.ExportRange = ExportRange.SetOfViews;
-            //}
-            //else
-            //{
-            //    ieo.ExportRange = ExportRange
-            //      .VisibleRegionOfCurrentView;
-            //}
-
+            filepath = filepath.Replace(".jpg", " - 3D View - Isometric.jpg");
+             
             try
             {
+               
                 doc.ExportImage(ieo);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message);
+                return filepath;
             }
-            filepath = filepath.Replace(".jpg", " - 3D View - Isometric.jpg");
+            
             return filepath;
+        }
+
+        private void GetCropRegionView3D( XYZ centroid)
+        {
+            View3D.CropBoxActive = true;
+            XYZ up = View3D.UpDirection;
+            XYZ dir = View3D.ViewDirection;
+            XYZ cross = dir.CrossProduct(up);
+            
+            XYZ p0 = centroid + 5.0 * View3D.RightDirection;
+            XYZ p1 = p0+5.0*XYZ.BasisZ;
+            XYZ p2 = p1 - 10.0 * View3D.RightDirection;
+            XYZ p3 = p2 - 10.0 * XYZ.BasisZ;
+            XYZ p4 = p3+ 10.0 * View3D.RightDirection;
+            CurveLoop curves = new CurveLoop();
+            curves.Append(Line.CreateBound(p1, p2));
+            curves.Append(Line.CreateBound(p2, p3));
+            curves.Append(Line.CreateBound(p3, p4));
+            curves.Append(Line.CreateBound(p4, p1));
+            //XYZ min = p3 + dir * 5.0;
+            //XYZ max = p1 - dir * 5.0;
+
+            //View3D.CropBox.Max = max;
+            //View3D.CropBox.Min = min;
+            //System.Windows.Forms.MessageBox.Show(max + "\n" + min);
+            //try
+            //{
+            //    View3D.GetCropRegionShapeManager().SetCropShape(curves);
+            //}
+            //catch (Exception e)
+            //{
+
+            //    System.Windows.Forms.MessageBox.Show(e.Message);
+            //}
+
+
+        }
+
+        private OverrideGraphicSettings GetOverrideSettingDirectShape(Document document)
+        {
+            OverrideGraphicSettings ogs = new OverrideGraphicSettings();
+            ogs.SetSurfaceForegroundPatternColor(colorRed);
+            Element aa = new FilteredElementCollector(document).OfClass(typeof(FillPatternElement)).Where(x => x.Name.Equals("<Solid fill>")).FirstOrDefault();
+            Element aa1 = new FilteredElementCollector(document).OfClass(typeof(LinePatternElement)).Where(x => x.Name.Equals("_S4R_Center Line 1/4")).FirstOrDefault();
+            ogs.SetCutForegroundPatternId(aa.Id);
+            ogs.SetSurfaceForegroundPatternId(aa.Id);
+            ogs.SetCutForegroundPatternColor(colorRed);
+            ogs.SetSurfaceForegroundPatternColor(colorRed);
+
+            ogs.SetProjectionLinePatternId(aa1.Id);
+            ogs.SetProjectionLineColor(colorBlack);
+            ogs.SetProjectionLineWeight(5);
+            
+            return ogs;
+        }
+        private OverrideGraphicSettings GetOverrideSettingUnUseElements(Document document)
+        {
+            OverrideGraphicSettings ogs = new OverrideGraphicSettings();
+            ogs.SetSurfaceTransparency(95);
+
+            return ogs;
         }
     }
     class Util

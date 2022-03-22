@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 using DSP;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using WpfCustomControls;
@@ -43,11 +44,11 @@ namespace CheckInterSect.ViewModel
                 ElementInterSects[i].GetClashPoint(document, unit);
             }
         }
-        public void GetImageSource(Document document,string folderName)
+        public void GetImageSource(Document document,string folderName, List<ElementId> elementIds)
         {
             for (int i = 0; i < ElementInterSects.Count; i++)
             {
-                ElementInterSects[i].ImageSource = ElementInterSects[i].GetImageSource(document, ElementSet.Element, folderName);
+                ElementInterSects[i].ImageSource = ElementInterSects[i].GetImageSource(document, ElementSet.Element, folderName, elementIds);
             }
         }
         #region CreateView3D
